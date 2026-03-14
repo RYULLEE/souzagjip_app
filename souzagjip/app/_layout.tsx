@@ -1,24 +1,30 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { StyleSheet, Platform } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { AuthProvider } from '../context/AuthContext';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
+export default function RootLayout(): JSX.Element {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <GestureHandlerRootView style={styles.container}>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <StatusBar style="dark" backgroundColor="#F5F0E8" translucent={false} />
+          <Stack screenOptions={{ headerShown: false, contentStyle: styles.content }}>
+            <Stack.Screen name="login" />
+            <Stack.Screen name="signup" options={{ animation: 'slide_from_bottom' }} />
+            <Stack.Screen name="index" />
+            <Stack.Screen name="reader/[id]" options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name="profile/index" options={{ animation: 'slide_from_right' }} />
+          </Stack>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  content: { backgroundColor: '#F5F0E8' },
+});
